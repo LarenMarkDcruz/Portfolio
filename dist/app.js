@@ -1,8 +1,9 @@
-import { initializeTerminal } from './terminal.js?v=matrix-default';
+import { initializeTerminal } from './terminal.js?v=20261115-loops';
 import { renderFocusLine, selectFocusLine } from './focus_lines.js';
 import { createIntroTyping } from './intro_typing.js?v=cursor-at-end';
 import { initializeAsciiSculpture } from './ascii_sculpture.js?v=carved-texture';
 import { selectIntroText } from './intro_sentences.js';
+import { initializeAsciiVignettes } from './ascii_vignettes.js?v=20261115-loops';
 
 document.querySelector('.intro-copy').textContent = selectIntroText([Math.random(), Math.random(), Math.random()]);
 const playIntroTyping = createIntroTyping(document.querySelector('#home'));
@@ -50,6 +51,7 @@ function showTab(id, { focus = false, scroll = false } = {}) {
   document.querySelector('#current-path').textContent = panels[activeIndex].id;
   const filename = tabs[activeIndex].textContent.trim().replace(/^\[|\]$/g, '');
   document.querySelector('#terminal-location').textContent = `~/${filename}`;
+  document.dispatchEvent(new CustomEvent('portfolio:sectionchange', { detail: { section: panels[activeIndex].id } }));
   document.title = 'Meet Laren';
   if (focus) tabs[activeIndex].focus();
   if (scroll) window.scrollTo({ top: 0, behavior: 'instant' });
@@ -111,4 +113,5 @@ function initializeAppearancePicker() {
 initializeAppearancePicker();
 
 initializeTerminal({ navigate, themes });
+initializeAsciiVignettes(document.querySelectorAll('[data-ascii-vignette]'));
 initializeAsciiSculpture({ artwork: document.querySelector('#ascii-sculpture'), button: document.querySelector('#sculpture-motion'), resetButton: document.querySelector('#sculpture-reset') });

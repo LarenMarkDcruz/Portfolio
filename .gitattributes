@@ -1,0 +1,2 @@
+# Preserve meaningful spaces and tabs inside generated shell string literals.
+dist/vendor/just_bash.js -whitespace

@@ -1,5 +1,8 @@
+import { createPortfolioFiles, createTerminalSandbox } from './terminal_sandbox.js?v=20261115-loops';
+import { ColorCommandSyntaxError, parseColorPreferences } from './terminal_colors.js?v=20261115-loops';
+
 const SECTION_NAMES = ['home', 'skills', 'resume', 'work', 'beyond'];
-const COMMAND_NAMES = ['help', '/help', 'ls', 'pwd', 'cd', 'open', 'theme', 'mode', 'bg', 'background', 'fg', 'foreground', 'accent', 'font', 'reset', 'history', 'whoami', 'clear'];
+const COMMAND_NAMES = ['help', '/help', 'ls', 'pwd', 'cd', 'open', 'theme', 'mode', 'color', '/color', 'bg', 'background', 'fg', 'foreground', 'accent', 'font', 'reset', 'history', 'whoami', 'clear', 'cat', 'echo', 'printf', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'find', 'grep', 'sort', 'uniq', 'head', 'tail', 'wc', 'sed', 'awk', 'jq', 'date', 'env', 'which', 'bash'];
 const MAXIMUM_HISTORY_ENTRIES = 100;
 const COLOR_STORAGE_KEY = 'portfolio-terminal-colors';
 
@@ -63,10 +66,11 @@ function resetCustomAppearance(state) {
 
 const COMMAND_HELP_LINES = Object.freeze([
     'EXPLORE THE WEBSITE',
-    'ls                     list home, skills, resume, work, beyond',
+    'ls / ls ..             list virtual files / section directories',
     'cd skills / open work  visit a section (filenames also work)',
-    'cd .. / cd home        return home',
-    'pwd                    show the current section',
+    'cd home                return to the main page',
+    'cd ..                  move up one virtual directory',
+    'pwd                    show the sandbox working directory',
     'open github            open my GitHub profile',
     'open linkedin          open my LinkedIn profile',
     'open resume            open the Google Docs résumé',
@@ -82,6 +86,10 @@ const COMMAND_HELP_LINES = Object.freeze([
     'bg midnightblue        background; alias: background',
     'fg #eeeeee             text color; alias: foreground',
     'accent hotpink         links, headings, and glow',
+    '/color fg hotpink      any supported CSS text color',
+    '/color bg #0f0f23      any supported CSS background color',
+    '/color #eeeeee #000    foreground and background together',
+    '/color --fg "rgb(240, 240, 240)" --bg "midnightblue"',
     'Colors: CSS names, hex, rgb(), hsl(), oklch(), etc.',
     'font source            restore Source Code Pro',
     'font courier           Courier New (if installed)',
@@ -95,11 +103,23 @@ const COMMAND_HELP_LINES = Object.freeze([
     'TERMINAL',
     '/help or help          show this guide',
     'history                list commands from this session',
-    'whoami                 show my role and location',
+    'whoami                 show your sandbox identity',
     'clear                  clear the output',
     '↑↓ history · Tab complete · Shift+Tab leave input',
-    'Ctrl+L clear · Ctrl+C cancel input',
-    'Website commands only; this does not run system Bash.',
+    'Ctrl+L clear · Ctrl+C stop a running command',
+    '',
+    'BASH PLAYGROUND — virtual files, reset on reload',
+    'cd ~/playground        enter the scratch directory',
+    'echo hello > note.txt  write a virtual file',
+    'cat note.txt           read it back',
+    'printf "Go\\nPython\\nGo\\n" | sort | uniq -c',
+    'for n in 1 2 3; do echo "launch $n"; done',
+    'Variables, pipes, redirects, globbing, loops, and scripts.',
+    'Try grep, sed, awk, jq, find, head, tail, wc, cp, mv, rm.',
+    'ls /usr/bin            list the available shell commands',
+    'This is a browser Bash interpreter, not a full Linux VM.',
+    'No host files, network, installed programs, Python, or sudo.',
+    'Commands have time, memory, and output limits. Ctrl+C resets the sandbox.',
   ]);
 
 /** Build the terminal command reference. @param {string[]} themes @returns {string} */
@@ -150,6 +170,24 @@ function changeCustomAppearance({ command, value, state }) {
   return `${command} set to ${value}. Type reset to restore defaults. Fonts depend on what your device has installed.`;
 }
 
+/** Apply foreground/background colors together only after all values validate. @param {object} request @returns {string} */
+function changeTerminalColors({ value, state }) {
+  if (value === 'reset') { resetCustomAppearance(state); return 'Colors and font restored.'; }
+  try {
+    const preferences = parseColorPreferences(value);
+    for (const [key, color] of Object.entries(preferences)) {
+      if (!isAppearanceValueValid({ key, value: color })) return `Invalid ${key} color: ${color}. Use a CSS name, hex, rgb(), or hsl().`;
+    }
+    state.preferences = { ...state.preferences, ...preferences };
+    applyCustomAppearance(state.preferences);
+    saveCustomAppearance(state.preferences);
+    return Object.entries(preferences).map(([key, color]) => `${key} = ${color}`).join('\n');
+  } catch (error) {
+    if (error instanceof ColorCommandSyntaxError) return error.message;
+    throw error;
+  }
+}
+
 /** Execute navigation and display commands. @param {object} request @returns {string} */
 function executeCommand({ line, state, dependencies }) {
   const [rawCommand, ...argumentsList] = line.split(/\s+/);
@@ -157,22 +195,20 @@ function executeCommand({ line, state, dependencies }) {
   const command = { background: 'bg', foreground: 'fg' }[normalizedCommand] || normalizedCommand;
   const value = argumentsList.join(' ');
   if (['help', '/help'].includes(command)) return describeCommands(dependencies.themes);
-  if (command === 'ls') return SECTION_NAMES.map(section => `${section}/`).join('  ');
-  if (command === 'pwd') return `/${document.querySelector('#current-path').textContent}`;
   if (command === 'history') return state.history.map((entry, index) => `${index + 1}  ${entry}`).join('\n');
-  if (command === 'whoami') return 'Laren Mark D’Cruz — Backend Engineer / Site Reliability Engineer. Cisco/Splunk. Victoria, BC.';
+  if (['color', '/color'].includes(command)) return changeTerminalColors({ value, state });
   if (['bg', 'fg', 'accent', 'font'].includes(command)) return changeCustomAppearance({ command, value, state });
   if (command === 'reset') { resetCustomAppearance(state); return 'Custom colors and font reset.'; }
   if (['theme', 'mode'].includes(command)) return changeDisplaySelection({ selector: command === 'theme' ? '#theme' : '#appearance', value, choices: command === 'theme' ? dependencies.themes : ['dark', 'navy', 'light'] });
-  if (['cd', 'open'].includes(command)) return openDestination({ command, destination: value, navigate: dependencies.navigate });
+  if (command === 'open' || (command === 'cd' && !['', '..', '~'].includes(value) && SECTION_NAMES.includes(resolveSection(value)) && !/[;&|<>]/.test(value))) return openDestination({ command, destination: value, navigate: dependencies.navigate });
   if (SECTION_NAMES.includes(command)) return openDestination({ command: 'cd', destination: command, navigate: dependencies.navigate });
-  return `Command not found: ${command}. Type help to see website commands.`;
+  return null;
 }
 
 /** Complete known commands and their supported arguments. @param {object} context @returns {void} */
 function completeInput({ input, output, themes }) {
   const words = input.value.toLowerCase().split(/\s+/);
-  const argumentChoices = { cd: SECTION_NAMES, open: [...SECTION_NAMES, 'github', 'linkedin', 'youtube'], theme: themes, mode: ['dark', 'navy', 'light'], font: Object.keys(FONT_CHOICES) };
+  const argumentChoices = { cd: [...SECTION_NAMES, '~/playground'], open: [...SECTION_NAMES, 'github', 'linkedin', 'youtube'], theme: themes, mode: ['dark', 'navy', 'light'], font: Object.keys(FONT_CHOICES), color: ['fg', 'bg', 'accent', 'reset'], '/color': ['fg', 'bg', 'accent', 'reset'] };
   const choices = words.length === 1 ? COMMAND_NAMES : argumentChoices[words[0]] || [];
   const matches = choices.filter(choice => choice.startsWith(words.at(-1)));
   if (matches.length === 1) { words[words.length - 1] = matches[0]; input.value = words.join(' '); }
@@ -186,6 +222,7 @@ function appendOutput({ output, line, message }) {
   output.append(entry);
   while (output.children.length > MAXIMUM_HISTORY_ENTRIES) output.firstElementChild.remove();
   output.scrollTop = ['help', '/help'].includes(line.toLowerCase()) ? entry.offsetTop : output.scrollHeight;
+  return entry;
 }
 
 /** Add command history and familiar keyboard shortcuts. @param {object} context @returns {void} */
@@ -196,7 +233,7 @@ function bindTerminalKeyboard(context) {
     if (event.ctrlKey && ['l', 'c'].includes(event.key.toLowerCase())) {
       event.preventDefault();
       if (event.key.toLowerCase() === 'l') output.replaceChildren();
-      else input.value = '';
+      else { input.value = ''; if (state.isRunning) state.sandbox.cancel(); }
       return;
     }
     if (!['ArrowUp', 'ArrowDown'].includes(event.key)) return;
@@ -219,12 +256,21 @@ function bindTerminalClickFocus(input) {
 export function initializeTerminal(dependencies) {
   const output = document.querySelector('#terminal-output');
   const input = document.querySelector('#terminal-input');
-  const state = { history: [], historyIndex: 0, draft: '', preferences: restoreCustomAppearance() };
+  const section = document.querySelector('#current-path').textContent;
+  const sandbox = createTerminalSandbox({ files: createPortfolioFiles(document), section });
+  const state = { history: [], historyIndex: 0, draft: '', preferences: restoreCustomAppearance(), sandbox, isRunning: false };
   bindTerminalKeyboard({ input, output, state, themes: dependencies.themes });
   bindTerminalClickFocus(input);
   for (const selector of ['#theme', '#appearance']) document.querySelector(selector).addEventListener('change', () => resetCustomAppearance(state));
-  document.querySelector('#terminal-form').addEventListener('submit', event => {
+  document.addEventListener('portfolio:sectionchange', event => sandbox.setSection(event.detail.section));
+  bindTerminalSubmission({ input, output, state, dependencies });
+}
+
+/** Execute one submitted command while keeping cancellation and page navigation responsive. @param {object} context @returns {void} */
+function bindTerminalSubmission({ input, output, state, dependencies }) {
+  document.querySelector('#terminal-form').addEventListener('submit', async event => {
     event.preventDefault();
+    if (state.isRunning) return;
     const line = input.value.trim();
     input.value = '';
     if (!line) return;
@@ -233,7 +279,38 @@ export function initializeTerminal(dependencies) {
     state.historyIndex = state.history.length;
     state.draft = '';
     if (line.toLowerCase() === 'clear') { output.replaceChildren(); return; }
-    appendOutput({ output, line, message: executeCommand({ line, state, dependencies }) });
+    const response = executeCommand({ line, state, dependencies });
+    if (response !== null) appendOutput({ output, line, message: response });
+    else await executeSandboxSubmission({ line, input, output, state, dependencies });
     input.focus({ preventScroll: true });
   });
+}
+
+/** Display shell output while leaving Ctrl+C available during execution. @param {object} submission @returns {Promise<void>} */
+async function executeSandboxSubmission({ line, output, state, dependencies }) {
+  const entry = appendOutput({ output, line, message: 'running…' });
+  state.isRunning = true;
+  output.setAttribute('aria-busy', 'true');
+  try {
+    const result = await state.sandbox.execute(line);
+    entry.textContent = `$ ${line}\n${result.stdout}${result.stderr}`;
+    updateSandboxLocation({ result, dependencies });
+  } catch (error) {
+    entry.textContent = `$ ${line}\n${error.message}`;
+  } finally {
+    state.isRunning = false;
+    output.setAttribute('aria-busy', 'false');
+    output.scrollTop = output.scrollHeight;
+  }
+}
+
+/** Mirror directory changes into website tabs without treating scratch directories as routes. @param {object} context @returns {void} */
+function updateSandboxLocation({ result, dependencies }) {
+  const directory = result.directory || '/home/visitor';
+  const section = directory.replace('/home/visitor/', '');
+  if (SECTION_NAMES.includes(section)) {
+    if (document.querySelector('#current-path').textContent !== section) dependencies.navigate(section);
+    return;
+  }
+  document.querySelector('#terminal-location').textContent = directory.replace('/home/visitor', '~');
 }

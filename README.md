@@ -7,18 +7,18 @@ Laren Mark D’Cruz’s minimalist portfolio: C++-inspired navigation, near-blac
 No build step or package installation is needed. From this folder, run:
 
 ```sh
-python3 -m http.server 8000 --directory dist --bind 127.0.0.1
+./start.sh
 ```
 
-Open http://localhost:8000. Stop the server with Ctrl+C.
+Open http://127.0.0.1:8000. Keep that terminal open. Stop the server with Ctrl+C. Use `./start.sh 8001` for another port; `./start.sh --help` lists usage.
 
 ## Edit in Codex on your computer
 
 1. Clone this repository:
 
    ```sh
-   git clone https://github.com/LarenMarkDcruz/Portfolio-retro.git
-   cd Portfolio-retro
+   git clone https://github.com/LarenMarkDcruz/Portfolio.git
+   cd Portfolio
    ```
 
 2. In the ChatGPT/Codex desktop app, add a local project and select the cloned `Portfolio-retro` folder. Choose the Local environment for work on these files.
@@ -37,10 +37,10 @@ Open http://localhost:8000. Stop the server with Ctrl+C.
 
 The workflow in `.github/workflows/deploy_pages.yml` publishes only `dist/`. GitHub Pages is free for public repositories.
 
-1. Open https://github.com/LarenMarkDcruz/Portfolio-retro/settings/pages.
+1. Open https://github.com/LarenMarkDcruz/Portfolio/settings/pages.
 2. Under **Build and deployment**, choose **GitHub Actions** as the source. Enable repository Actions if GitHub asks.
 3. Open **Actions → Publish portfolio → Run workflow**, choose `main`, and run it.
-4. After the workflow succeeds, open https://larenmarkdcruz.github.io/Portfolio-retro/. Settings → Pages shows the confirmed address.
+4. After the workflow succeeds, open https://larenmarkdcruz.github.io/Portfolio/. Settings → Pages shows the confirmed address.
 
 Future updates: edit files in `dist/`, preview locally, commit, and push to `main`. The workflow automatically publishes changes to `dist/`. A failed deployment appears under Actions; the workflow must succeed before changes go live.
 
@@ -58,23 +58,34 @@ An experimental CSS HDR enhancement brightens the name, role, and brand only whe
 
 ## Résumé link
 
-The résumé tab links to Google Docs; `open resume` opens the same document. The footer has been removed. To make it accessible to visitors, set that document's General access to **Anyone with the link → Viewer**. A subtle link is still public, not access control. The résumé tab links directly to the Google Doc.
+The résumé link sits below the coffee illustration, without a shimmer or bright white glow. `open resume` opens the same Google Doc. The footer has been removed. To make the document accessible to visitors, set its General access to **Anyone with the link → Viewer**.
 
 ## Website terminal
 
-The command line is always visible in a compact, borderless region at the bottom. Enter `/help` or `help` for the full website guide. This is a browser terminal for the portfolio, not an operating-system shell.
+The command line sits inside a thin border at the bottom. Enter `/help` or `help` for website navigation, appearance controls, and sandbox examples. A locally bundled just-bash interpreter runs Bash syntax in a worker with an in-memory filesystem.
 
 | Purpose | Commands |
 | --- | --- |
 | Navigation | `ls`, `pwd`, `cd skills`, `cd ..`, `open work`, `open github`, `open linkedin`, `open resume` |
 | Appearance | `theme cyan`, `mode light`, `mode navy`, `bg #101018`, `fg #eeeeee`, `accent hotpink`, `font courier`, `reset` |
+| Color pairs | `/color #eeeeee #0f0f23`, `/color --fg "rgb(240, 230, 220)" --bg midnightblue` |
+| Virtual files | `mkdir demo`, `echo hello > note.txt`, `cat note.txt`, `grep hello note.txt`, `cp`, `mv`, `rm` |
+| Bash syntax | Pipes, redirects, variables, globbing, loops, scripts, `sed`, `awk`, `jq`, `sort`, `uniq` |
 | Terminal | `/help`, `history`, `whoami`, `clear` |
 
-`cd resume` opens the résumé section; `open resume` opens the Google Doc in a new tab. Popup blockers may require using the page link instead. Arrow keys recall session history. Tab completes commands and arguments; Shift+Tab leaves the field. Ctrl+L clears output; Ctrl+C cancels input.
+`cd resume` opens the résumé section; `open resume` opens the Google Doc in a new tab. Popup blockers may require using the page link instead. Arrow keys recall session history. Tab completes commands and supported website arguments; Shift+Tab leaves the field. Ctrl+L clears output. Ctrl+C stops a running worker and resets the virtual filesystem, or clears unfinished input when idle.
 
-The compact terminal stays at the bottom in document flow without a box. Output scrolls in a bounded area. The `visit:~/main.cpp $` prompt follows the active tab filename, including history navigation. Click unused terminal space to type; an underscore marks the empty prompt. Keyboard focus uses an underline instead of a dotted rectangle. Use `/help` or `help` for commands. Custom background, foreground, and accent colors accept browser-supported CSS colors: names, hex, RGB, HSL, and other supported color functions. Visitors can choose any colors, including combinations with low contrast; `reset` restores the palette. The `font` command selects bundled Source Code Pro, browser families, or a locally installed font. Choosing a palette or display mode resets custom colors. Custom colors and command history stay within the current visit. Fonts persist locally; reload restores the Matrix palette.
+Output scrolls in a bounded area. The `visit:~/main.cpp $` prompt follows the active tab filename and shows scratch-directory paths while exploring the sandbox. Click unused terminal space to type; an underscore marks the empty prompt. Keyboard focus uses an underline instead of a dotted rectangle. Foreground, background, and accents accept browser-supported CSS colors. `/color` validates every supplied color before changing anything. Visitors can choose any colors, including low-contrast combinations; `reset` restores the palette. The `font` command selects bundled Source Code Pro, browser families, or locally installed fonts. Choosing a palette or display mode resets custom colors. Custom colors, virtual files, and history last for the current visit. Fonts persist locally; reload restores Matrix green.
+
+The sandbox supports the interpreter's command set, not every installed Linux program. `ls /usr/bin` lists available commands. It cannot access host files, run native programs, use Python/Node, or make network requests. Variables, virtual files, and the current directory persist across commands; shell functions and arrays remain scoped to an individual submitted script. Limits cap execution time, output, filesystem size, and loop iterations. A five-second worker deadline keeps the page responsive. Dependencies and a reproducible bundle tool live in `dist/vendor/` and `tools/terminal_sandbox/`; normal edits need no build step.
 
 A brief section entrance and hover glows respect reduced-motion preferences. No photo is required for this text-first portfolio.
+
+## Looping ASCII illustrations
+
+Skills, résumé, and work have independent 144-column × 64-row text illustrations, displayed at a maximum width of 400px without changing surrounding content. The cat anticipates a swat, reaches toward a fish, blinks, and swishes its tail. A shaded, three-dimensional rocket rotates through a full turn with a porthole, fins, and flickering exhaust. A ceramic coffee cup uses programming-word texture with hollow handle, dark coffee, a saucer, and drifting steam.
+
+Each animation loops continuously, pauses when hidden or offscreen, and includes a keyboard-accessible pause button. Reduced-motion preferences show a still frame. They target 30 frames per second, independently of Beyond's existing Classic fusion renderer. The character grid and font scale together on mobile so no artwork edge gets clipped.
 
 ## Random C++ motto
 

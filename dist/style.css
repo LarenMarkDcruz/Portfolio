@@ -316,19 +316,13 @@ body[data-appearance=light] #home h1 { color: var(--text); text-shadow: none; }
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #fff;
-  font-weight: 700;
-  text-shadow: 0 0 4px #ffffff80, 0 0 12px #ffffff40;
+  margin-top: 20px;
+  color: var(--text);
+  font-weight: 500;
+  text-shadow: none;
 }
-.resume-link:hover { color: #fff; text-decoration: underline; text-underline-offset: 5px; }
-body[data-appearance=light] .resume-link { color: #29251f; text-shadow: 0 0 4px #fff, 0 0 12px #ffffff80; }
-@media (prefers-reduced-motion: no-preference) and (prefers-contrast: no-preference) {
-  .resume-link { animation: resume-shimmer 4s ease-in-out infinite; }
-}
-@keyframes resume-shimmer {
-  0%, 100% { text-shadow: 0 0 4px #ffffff80, 0 0 12px #ffffff40; }
-  50% { text-shadow: 0 0 5px #ffffffc0, 0 0 18px #ffffff80; }
-}
+.resume-link:hover { color: var(--bright); text-decoration: underline; text-underline-offset: 5px; }
+body[data-appearance=light] .resume-link { color: var(--text); text-shadow: none; }
 @media (prefers-contrast: more) {
   .resume-link, body[data-appearance=light] .resume-link { text-shadow: none; }
 }
@@ -342,8 +336,9 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 .terminal form { flex: none; flex-wrap: nowrap; }
 .terminal form label { flex-basis: auto; white-space: nowrap; }
 
-/* A footer-like prompt stays in the document flow without a surrounding box. */
-.shell > .terminal { margin: 20px 0 0; padding: 12px 0 0; border: 0; }
+/* The terminal remains in document flow so it never covers page content. */
+.shell > .terminal { margin: 20px 0 0; padding: 14px 16px 12px; border: 1px solid var(--dim); }
+.terminal-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; font-size: 13px; }
 .terminal-content { height: auto; min-height: 0; max-height: none; padding: 0; border: 0; background: transparent; gap: 4px; cursor: text; }
 .terminal-content > p { margin: 0; font-size: 14px; }
 #terminal-output { flex: none; max-height: clamp(100px, 18svh, 200px); position: relative; }
@@ -379,10 +374,21 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 @media (max-width: 600px) { .interests-list { font-size: 18px; } }
 @media (prefers-contrast: more) { .interest-title { text-shadow: none; } }
 
-.ascii-doodle { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin: 28px 0 0; }
-.ascii-doodle pre { flex: none; margin: 0; color: var(--green); font: 500 14px/1.25 'Source Code Pro', monospace; white-space: pre; text-shadow: 0 0 5px var(--glow); }
-.ascii-doodle figcaption { max-width: 32ch; color: var(--muted); font-size: 14px; }
-@media (prefers-contrast: more) { .ascii-doodle pre { text-shadow: none; } }
+.ascii-doodle { width: min(100%, 400px); margin: 20px 0 0; container-type: inline-size; }
+.ascii-doodle pre { position: relative; width: 100%; height: 81.49cqw; margin: 0; overflow: hidden;
+  color: var(--green); font: 500 calc(100cqw / 144 / .6)/1.1 'Source Code Pro', monospace; white-space: pre; text-shadow: none; }
+.ascii-doodle figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 13px; }
+.ascii-doodle button { flex: none; min-height: 44px; }
+.vignette-tone { position: absolute; inset: 0; display: block; pointer-events: none; }
+.vignette-tone-0 { color: color-mix(in srgb, var(--bg) 65%, var(--green)); }
+.vignette-tone-1 { color: color-mix(in srgb, var(--bg) 40%, var(--green)); }
+.vignette-tone-2 { color: var(--dim); }
+.vignette-tone-3 { color: var(--green); }
+.vignette-tone-4 { color: var(--bright); }
+.vignette-tone-5 { color: color-mix(in srgb, var(--bright) 35%, white); text-shadow: 0 0 3px var(--glow); }
+body[data-appearance=light] .vignette-tone-0 { color: var(--muted); }
+body[data-appearance=light] .vignette-tone-5 { color: var(--bright); text-shadow: none; }
+@media (prefers-contrast: more) { .vignette-tone { color: var(--text); text-shadow: none; } }
 
 #beyond { padding-top: 16px; }
 #beyond .section-heading { padding-bottom: 8px; }
