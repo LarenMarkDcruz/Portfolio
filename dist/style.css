@@ -336,15 +336,31 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 .terminal form { flex: none; flex-wrap: nowrap; }
 .terminal form label { flex-basis: auto; white-space: nowrap; }
 
-:root { --terminal-dock-height: clamp(180px, 25svh, 320px); --terminal-collapsed-height: 100px; }
+:root {
+  --terminal-default-height: clamp(180px, 25svh, 320px);
+  --terminal-minimum-height: min(160px, 55svh);
+  --terminal-maximum-height: 75svh;
+  --terminal-dock-height: clamp(var(--terminal-minimum-height), var(--terminal-preferred-height, var(--terminal-default-height)), var(--terminal-maximum-height));
+  --terminal-collapsed-height: 100px;
+}
 html { scroll-padding-bottom: calc(var(--terminal-dock-height) + 24px); }
 body { padding-bottom: var(--terminal-dock-height); }
 .shell { min-height: calc(100svh - var(--terminal-dock-height)); }
 .shell > .terminal { position: fixed; z-index: 10; inset: auto 0 0; display: flex; flex-direction: column;
   height: var(--terminal-dock-height); margin: 0; padding: 0 clamp(18px, 2.4vw, 48px) max(8px, env(safe-area-inset-bottom));
   border: 0; border-top: 1px solid var(--line); background: var(--bg); }
+body[data-terminal-expanded=true] .shell > .terminal { min-height: var(--terminal-minimum-height); max-height: var(--terminal-maximum-height); }
 .terminal-heading { display: flex; justify-content: space-between; align-items: center; flex: none; gap: 8px; margin: 0; font-size: 13px; min-height: 44px; }
 .terminal-heading button { font-size: 13px; }
+#terminal-resize {
+  position: absolute; inset: 0 auto auto 50%; transform: translateX(-50%);
+  display: grid; place-items: center; width: 64px; height: 44px;
+  cursor: ns-resize; touch-action: none; user-select: none;
+}
+#terminal-resize span { width: 30px; height: 6px; border-block: 1px solid var(--muted); }
+#terminal-resize:hover span, #terminal-resize:focus-visible span { border-color: var(--green); }
+#terminal-resize:focus-visible { outline: 1px solid var(--green); outline-offset: -4px; }
+html[data-terminal-resizing] { cursor: ns-resize; user-select: none; }
 .terminal-content { height: auto; min-height: 0; max-height: none; padding: 0; border: 0; background: transparent; gap: 4px; cursor: text; }
 .terminal .terminal-content { flex: 1; }
 .terminal-content > p { margin: 0; font-size: 14px; }
@@ -364,11 +380,12 @@ body { padding-bottom: var(--terminal-dock-height); }
 .skills-list dt, .section-heading > span, .resume-entry h3, .resume-entry > .accent, .project-title { color: var(--bright); text-shadow: 0 0 5px var(--glow); }
 .section-heading h2 { text-shadow: 0 0 3px var(--glow), 0 0 12px var(--glow); }
 @media (prefers-reduced-motion: no-preference) { .terminal-entry:focus-within:has(input:placeholder-shown)::after { animation: blink 1.3s steps(1) infinite; } }
-body[data-terminal-expanded=false] { --terminal-dock-height: var(--terminal-collapsed-height); }
+html:has(body[data-terminal-expanded=false]) { --terminal-dock-height: var(--terminal-collapsed-height); }
+body[data-terminal-expanded=false] #terminal-resize,
 body[data-terminal-expanded=false] #terminal-output,
 body[data-terminal-expanded=false] #terminal-hint { display: none; }
 @media (max-width: 700px) {
-  :root { --terminal-dock-height: clamp(220px, 35svh, 300px); }
+  :root { --terminal-default-height: clamp(220px, 35svh, 300px); }
   .terminal form { flex-wrap: nowrap; gap: 6px; font-size: 14px; }
   .terminal form label { flex-basis: auto; font-size: 13px; }
   .terminal-content > p { font-size: 13px; }
