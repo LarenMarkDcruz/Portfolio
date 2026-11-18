@@ -62,7 +62,7 @@ The résumé link sits below the coffee illustration, without a shimmer or brigh
 
 ## Website terminal
 
-The command line sits inside a thin border at the bottom. Enter `/help` or `help` for website navigation, appearance controls, and sandbox examples. A locally bundled just-bash interpreter runs Bash syntax in a worker with an in-memory filesystem.
+The command line docks at the bottom behind one subtle top divider. On desktop it occupies 25% of the viewport, with a 180px minimum and 320px maximum. The page reserves that space so content remains reachable. Terminal history scrolls independently while the input stays visible. Mobile starts with a compact prompt; expand it to read history, or submit a command to expand automatically. The collapse button keeps the prompt available. Enter `/help` or `help` for website navigation, appearance controls, and sandbox examples. A locally bundled just-bash interpreter runs Bash syntax in a worker with an in-memory filesystem.
 
 | Purpose | Commands |
 | --- | --- |
@@ -83,7 +83,7 @@ A brief section entrance and hover glows respect reduced-motion preferences. No 
 
 ## Looping ASCII illustrations
 
-Skills, résumé, and work have independent 144-column × 64-row text illustrations, displayed at a maximum width of 400px without changing surrounding content. The cat anticipates a swat, reaches toward a fish, blinks, and swishes its tail. A shaded, three-dimensional rocket rotates through a full turn with a porthole, fins, and flickering exhaust. A ceramic coffee cup uses programming-word texture with hollow handle, dark coffee, a saucer, and drifting steam.
+Skills, résumé, and work have independent 144-column × 64-row text illustrations. Skills shows a woodcut-inspired curling wave with a hollow barrel, engraved water lines, branching foam, drifting spray, and ripples. The wave spans at most 320px, aligned right below the skills list. The cat and fish animation remains archived in `archive/ascii_vignettes/`, with its tests, and is not loaded by the website. A shaded, three-dimensional rocket rotates through a full turn with a porthole, fins, and flickering exhaust at up to 400px wide. The smaller, 300px coffee illustration uses programming-word texture with a hollow handle, dark coffee, a saucer, and drifting steam. Other section content keeps its existing typography and layout.
 
 Each animation loops continuously, pauses when hidden or offscreen, and includes a keyboard-accessible pause button. Reduced-motion preferences show a still frame. They target 30 frames per second, independently of Beyond's existing Classic fusion renderer. The character grid and font scale together on mobile so no artwork edge gets clipped.
 

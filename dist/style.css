@@ -336,13 +336,20 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 .terminal form { flex: none; flex-wrap: nowrap; }
 .terminal form label { flex-basis: auto; white-space: nowrap; }
 
-/* The terminal remains in document flow so it never covers page content. */
-.shell > .terminal { margin: 20px 0 0; padding: 14px 16px 12px; border: 1px solid var(--dim); }
-.terminal-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; font-size: 13px; }
+:root { --terminal-dock-height: clamp(180px, 25svh, 320px); --terminal-collapsed-height: 100px; }
+html { scroll-padding-bottom: calc(var(--terminal-dock-height) + 24px); }
+body { padding-bottom: var(--terminal-dock-height); }
+.shell { min-height: calc(100svh - var(--terminal-dock-height)); }
+.shell > .terminal { position: fixed; z-index: 10; inset: auto 0 0; display: flex; flex-direction: column;
+  height: var(--terminal-dock-height); margin: 0; padding: 0 clamp(18px, 2.4vw, 48px) max(8px, env(safe-area-inset-bottom));
+  border: 0; border-top: 1px solid var(--line); background: var(--bg); }
+.terminal-heading { display: flex; justify-content: space-between; align-items: center; flex: none; gap: 8px; margin: 0; font-size: 13px; min-height: 44px; }
+.terminal-heading button { font-size: 13px; }
 .terminal-content { height: auto; min-height: 0; max-height: none; padding: 0; border: 0; background: transparent; gap: 4px; cursor: text; }
+.terminal .terminal-content { flex: 1; }
 .terminal-content > p { margin: 0; font-size: 14px; }
-#terminal-output { flex: none; max-height: clamp(100px, 18svh, 200px); position: relative; }
-#terminal-output:empty { display: none; }
+#terminal-output { flex: 1; max-height: none; position: relative; overscroll-behavior: contain; }
+#terminal-output:empty { display: block; }
 #terminal-output p { border: 0; padding-left: 0; margin: 8px 0 14px; }
 .terminal form { gap: 10px; }
 .terminal form label { color: var(--muted); }
@@ -357,10 +364,16 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 .skills-list dt, .section-heading > span, .resume-entry h3, .resume-entry > .accent, .project-title { color: var(--bright); text-shadow: 0 0 5px var(--glow); }
 .section-heading h2 { text-shadow: 0 0 3px var(--glow), 0 0 12px var(--glow); }
 @media (prefers-reduced-motion: no-preference) { .terminal-entry:focus-within:has(input:placeholder-shown)::after { animation: blink 1.3s steps(1) infinite; } }
-@media (max-width: 600px) {
-  .terminal form { flex-wrap: wrap; gap: 0 8px; }
-  .terminal form label { flex-basis: 100%; font-size: 15px; }
+body[data-terminal-expanded=false] { --terminal-dock-height: var(--terminal-collapsed-height); }
+body[data-terminal-expanded=false] #terminal-output,
+body[data-terminal-expanded=false] #terminal-hint { display: none; }
+@media (max-width: 700px) {
+  :root { --terminal-dock-height: clamp(220px, 35svh, 300px); }
+  .terminal form { flex-wrap: nowrap; gap: 6px; font-size: 14px; }
+  .terminal form label { flex-basis: auto; font-size: 13px; }
   .terminal-content > p { font-size: 13px; }
+  .terminal-subtitle { display: none; }
+  .terminal-entry { min-width: 24px; }
 }
 @media (prefers-contrast: more) {
   .skills-list dt, .section-heading > span, .resume-entry h3, .resume-entry > .accent, .project-title, .section-heading h2, .terminal form:focus-within label { text-shadow: none; }
@@ -375,6 +388,8 @@ body[data-appearance=navy] { --bg: #0f0f23; }
 @media (prefers-contrast: more) { .interest-title { text-shadow: none; } }
 
 .ascii-doodle { width: min(100%, 400px); margin: 20px 0 0; container-type: inline-size; }
+.ascii-doodle[data-ascii-vignette=waves] { width: min(100%, 320px); margin-left: auto; }
+.ascii-doodle[data-ascii-vignette=coffee] { width: min(100%, 300px); }
 .ascii-doodle pre { position: relative; width: 100%; height: 81.49cqw; margin: 0; overflow: hidden;
   color: var(--green); font: 500 calc(100cqw / 144 / .6)/1.1 'Source Code Pro', monospace; white-space: pre; text-shadow: none; }
 .ascii-doodle figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 13px; }

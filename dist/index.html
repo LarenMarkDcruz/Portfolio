@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="terminal_icon.svg">
 <link rel="preload" href="SourceCodePro-300.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="SourceCodePro-Medium.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="style.css?v=20261115-loops">
+<link rel="stylesheet" href="style.css?v=20261117-waves">
 </head>
 <body data-theme="matrix" data-appearance="dark">
 <a class="skip" href="#main">Skip to content</a>
@@ -49,11 +49,15 @@
 <div><dt>AI &amp; agents</dt><dd>LangChain · LangGraph · LangSmith · Claude &amp; Codex subagents · Agent skills</dd></div>
 <div><dt>currently building</dt><dd>Websites &amp; this portfolio<span class="cursor" aria-hidden="true">_</span></dd></div>
 </dl>
-<figure class="ascii-doodle" data-ascii-vignette="cat" aria-label="An ASCII cat swishes its tail, blinks, and bats a fish that slides away.">
-<pre aria-hidden="true"> /\_/\
-( o.o )  &gt; sudo pet cat
- &gt; ^ &lt;</pre>
-<figcaption><span>// works on my machine. the cat agrees.</span><button type="button" hidden>[pause]</button></figcaption>
+<figure class="ascii-doodle" data-ascii-vignette="waves" aria-label="An animated ASCII wave curls over an open barrel, with bright branching foam, drifting spray, and ocean ripples.">
+<pre aria-hidden="true">           .:*~~~~*:.
+       .:*~          ~*.
+    .:~       .~~~.    '*
+ .:~       .:'     '~..'
+~        .:'
+ ~~~.      '~.       ~~~
+     ~~~~~.   '~~~~~~~~~</pre>
+<figcaption><span>// keep learning. ride the next wave.</span><button type="button" hidden>[pause]</button></figcaption>
 </figure>
 </section>
 <section id="resume">
@@ -121,13 +125,13 @@
 </main>
 </div>
 <aside class="terminal" aria-label="Website terminal">
-<p class="terminal-heading"><span>terminal<span class="accent">_</span></span><span class="muted">browser sandbox</span></p>
+<div class="terminal-heading"><span>terminal<span class="accent">_</span><span class="terminal-subtitle muted"> / browser sandbox</span></span><button id="terminal-toggle" type="button" aria-expanded="true" aria-controls="terminal-output terminal-hint">[collapse −]</button></div>
 <div class="terminal-content">
-<p class="muted">Try <span class="accent">/help</span> · ↑↓ history · Tab completes.</p>
+<p id="terminal-hint" class="muted">Try <span class="accent">/help</span> · ↑↓ history · Tab completes.</p>
 <div id="terminal-output" role="log" aria-live="polite"></div>
 <form id="terminal-form"><label for="terminal-input"><span class="accent">visit</span>:<span id="terminal-location">~/main.cpp</span> $</label><div class="terminal-entry"><input id="terminal-input" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder=" "></div><button type="submit" aria-label="Run command">↵</button></form>
 </div>
 </aside>
 
-</div><script type="module" src="app.js?v=20261115-loops"></script>
+</div><script type="module" src="app.js?v=20261117-waves"></script>
 </body></html>

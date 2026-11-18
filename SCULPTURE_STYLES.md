@@ -28,7 +28,18 @@ When Laren asks about available ASCII styles, show this catalogue and distinguis
 
 The sixteen families interpret the supplied 4×4 reference; they are procedural designs rather than exact image reproductions. The archived geometry catalogue lives in `archive/ascii_style_library/sculpture_patterns.js`.
 
-## Rendering choices
+## Page illustrations
+
+These are separate from Beyond's sculpture style catalogue:
+
+| Illustration | Type | Location |
+|---|---|---|
+| Curling wave | Active | Skills; animated foam, spray, and ripples |
+| Coffee and steam | Active | Résumé; smaller 300px illustration |
+| Rotating rocket | Active | Work |
+| Cat and fish | Archived | `archive/ascii_vignettes/ascii_cat.js` |
+
+## Sculpture rendering choices
 
 - Resolution: 136 columns on desktop; 112 on narrow sculpture windows. Fixed camera; oversized forms crop at the rectangle edges.
 - Curves: the active renderer uses two smoothly fused, warped surfaces. The archived families include ribbons, orbital tubes, spirals, and geometric forms.

@@ -1,4 +1,4 @@
-import { createAsciiFrame, finishAsciiFrame, plotAsciiCharacter, strokeAsciiCurve, strokeAsciiLine } from './ascii_frame.js?v=20261115-loops';
+import { createAsciiFrame, finishAsciiFrame, plotAsciiCharacter, strokeAsciiCurve, strokeAsciiLine } from '../../dist/ascii_frame.js?v=20261115-loops';
 
 /** Sample a playful six-second anticipation, reach, and fish-slide loop. @param {number} time @returns {object} */
 export function sampleCatPose(time) {

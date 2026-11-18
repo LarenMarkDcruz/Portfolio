@@ -3,7 +3,8 @@ import { renderFocusLine, selectFocusLine } from './focus_lines.js';
 import { createIntroTyping } from './intro_typing.js?v=cursor-at-end';
 import { initializeAsciiSculpture } from './ascii_sculpture.js?v=carved-texture';
 import { selectIntroText } from './intro_sentences.js';
-import { initializeAsciiVignettes } from './ascii_vignettes.js?v=20261115-loops';
+import { initializeAsciiVignettes } from './ascii_vignettes.js?v=20261116-waves';
+import { initializeTerminalDock } from './terminal_dock.js?v=20261116-waves';
 
 document.querySelector('.intro-copy').textContent = selectIntroText([Math.random(), Math.random(), Math.random()]);
 const playIntroTyping = createIntroTyping(document.querySelector('#home'));
@@ -113,5 +114,6 @@ function initializeAppearancePicker() {
 initializeAppearancePicker();
 
 initializeTerminal({ navigate, themes });
+initializeTerminalDock(document);
 initializeAsciiVignettes(document.querySelectorAll('[data-ascii-vignette]'));
 initializeAsciiSculpture({ artwork: document.querySelector('#ascii-sculpture'), button: document.querySelector('#sculpture-motion'), resetButton: document.querySelector('#sculpture-reset') });

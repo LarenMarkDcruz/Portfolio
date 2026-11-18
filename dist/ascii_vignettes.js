@@ -1,8 +1,8 @@
-import { renderAsciiCat } from './ascii_cat.js?v=20261115-loops';
+import { renderAsciiWaves } from './ascii_waves.js?v=20261116-waves';
 import { renderAsciiCoffee } from './ascii_coffee.js?v=20261115-loops';
 import { renderAsciiRocket } from './ascii_rocket.js?v=20261115-loops';
 
-const VIGNETTE_RENDERERS = Object.freeze({ cat: renderAsciiCat, coffee: renderAsciiCoffee, rocket: renderAsciiRocket });
+const VIGNETTE_RENDERERS = Object.freeze({ waves: renderAsciiWaves, coffee: renderAsciiCoffee, rocket: renderAsciiRocket });
 const FRAME_INTERVAL_IN_MILLISECONDS = 1000 / 30;
 
 /** Paint six text layers without exposing changing art to screen readers. @param {object} animation @returns {void} */
