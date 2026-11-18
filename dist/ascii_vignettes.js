@@ -1,13 +1,15 @@
-import { renderAsciiWaves } from './ascii_waves.js?v=20261116-waves';
+import { createBrailleCatRenderer } from './braille_cat.js?v=grinning-cat';
 import { renderAsciiCoffee } from './ascii_coffee.js?v=20261115-loops';
 import { renderAsciiRocket } from './ascii_rocket.js?v=20261115-loops';
 
-const VIGNETTE_RENDERERS = Object.freeze({ waves: renderAsciiWaves, coffee: renderAsciiCoffee, rocket: renderAsciiRocket });
+const VIGNETTE_RENDERERS = Object.freeze({ coffee: renderAsciiCoffee, rocket: renderAsciiRocket });
 const FRAME_INTERVAL_IN_MILLISECONDS = 1000 / 30;
 
 /** Paint six text layers without exposing changing art to screen readers. @param {object} animation @returns {void} */
 function paintVignette(animation) {
   const frame = animation.render(animation.time);
+  if (frame === animation.previousFrame) return;
+  animation.previousFrame = frame;
   animation.layers.forEach((layer, index) => { layer.textContent = frame.layers[index]; });
   animation.artwork.dataset.frame = String(animation.frameCount++);
 }
@@ -47,13 +49,15 @@ function refreshVignettePlayback(animation) {
 function initializeVignette(figure) {
   const artwork = figure.querySelector('pre');
   const button = figure.querySelector('button');
+  const vignette = figure.dataset.asciiVignette;
+  const render = vignette === 'grinning-cat' ? createBrailleCatRenderer(artwork.textContent) : VIGNETTE_RENDERERS[vignette];
   const layers = Array.from({ length: 6 }, (_, index) => {
     const layer = document.createElement('span');
     layer.className = `vignette-tone vignette-tone-${index}`;
     return layer;
   });
   artwork.replaceChildren(...layers);
-  const animation = { figure, artwork, button, layers, render: VIGNETTE_RENDERERS[figure.dataset.asciiVignette],
+  const animation = { figure, artwork, button, layers, render,
     time: 0, frameCount: 0, request: 0, previousTimestamp: 0, elapsedSincePaint: 0, isPaused: false, isVisible: false,
     motionPreference: matchMedia('(prefers-reduced-motion: reduce)') };
   paintVignette(animation);

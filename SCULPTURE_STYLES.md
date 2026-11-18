@@ -34,7 +34,8 @@ These are separate from Beyond's sculpture style catalogue:
 
 | Illustration | Type | Location |
 |---|---|---|
-| Curling wave | Active | Skills; animated foam, spray, and ripples |
+| Grinning Braille cat | Active | Skills; occasional blink |
+| Ocean breakers | Archived | `archive/ascii_vignettes/ascii_waves.js` |
 | Coffee and steam | Active | Résumé; smaller 300px illustration |
 | Rotating rocket | Active | Work |
 | Cat and fish | Archived | `archive/ascii_vignettes/ascii_cat.js` |

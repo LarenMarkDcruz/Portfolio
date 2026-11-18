@@ -388,10 +388,15 @@ body[data-terminal-expanded=false] #terminal-hint { display: none; }
 @media (prefers-contrast: more) { .interest-title { text-shadow: none; } }
 
 .ascii-doodle { width: min(100%, 400px); margin: 20px 0 0; container-type: inline-size; }
-.ascii-doodle[data-ascii-vignette=waves] { width: min(100%, 320px); }
+.ascii-doodle[data-ascii-vignette=grinning-cat] { width: min(100%, 320px); }
 .ascii-doodle[data-ascii-vignette=coffee] { width: min(100%, 300px); }
 .ascii-doodle pre { position: relative; width: 100%; height: 81.49cqw; margin: 0; overflow: hidden;
   color: var(--green); font: 500 calc(100cqw / 144 / .6)/1.1 'Source Code Pro', monospace; white-space: pre; text-shadow: none; }
+.ascii-doodle[data-ascii-vignette=grinning-cat] pre {
+  --portrait-font-size: calc(100cqw / 75 / .72);
+  font: 400 var(--portrait-font-size)/1 monospace;
+  height: calc(var(--portrait-font-size) * 44);
+}
 .ascii-doodle figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 13px; }
 .ascii-doodle button { flex: none; min-height: 44px; }
 .vignette-tone { position: absolute; inset: 0; display: block; pointer-events: none; }

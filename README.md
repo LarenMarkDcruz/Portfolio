@@ -83,7 +83,7 @@ A brief section entrance and hover glows respect reduced-motion preferences. No 
 
 ## Looping ASCII illustrations
 
-Skills, résumé, and work have independent 144-column × 64-row text illustrations. Skills shows a woodcut-inspired curling wave with a hollow barrel, engraved water lines, branching foam, drifting spray, and ripples. The wave spans at most 320px, aligned left below the skills list. The cat and fish animation remains archived in `archive/ascii_vignettes/`, with its tests, and is not loaded by the website. A shaded, three-dimensional rocket rotates through a full turn with a porthole, fins, and flickering exhaust at up to 400px wide. The smaller, 300px coffee illustration uses programming-word texture with a hollow handle, dark coffee, a saucer, and drifting steam. Other section content keeps its existing typography and layout.
+Skills shows a grinning cat drawn with Unicode Braille dots. The portrait blinks and sits at up to 320px wide, aligned left below the skills list. Résumé and Work use a 144-column × 64-row grid for the steaming coffee cup and rotating rocket. The earlier cat and fish and the looping ocean breakers are preserved in `archive/ascii_vignettes/`.
 
 Each animation loops continuously, pauses when hidden or offscreen, and includes a keyboard-accessible pause button. Reduced-motion preferences show a still frame. They target 30 frames per second, independently of Beyond's existing Classic fusion renderer. The character grid and font scale together on mobile so no artwork edge gets clipped.
 

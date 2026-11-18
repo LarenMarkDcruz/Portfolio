@@ -1,12 +1,16 @@
-import { createAsciiFrame, finishAsciiFrame, plotAsciiCharacter, strokeAsciiCurve } from './ascii_frame.js?v=20261115-loops';
+import { createAsciiFrame, finishAsciiFrame, plotAsciiCharacter, strokeAsciiCurve } from '../../dist/ascii_frame.js?v=20261115-loops';
 
-const LOOP_DURATION_IN_SECONDS = 8;
+const LOOP_DURATION_IN_SECONDS = 4;
+const SMALLER_BREAKERS = [
+  { left: 91, top: 33, widthScale: 0.35, heightScale: 0.39, depth: 1, strength: 0.77, delay: 0.33 },
+  { left: 38, top: 44, widthScale: 0.67, heightScale: 0.28, depth: 10, strength: 0.9, delay: 0.66 },
+];
 const WATER_CHARACTERS = ',;!|/()rsyXZ';
 const FOAM_CHARACTERS = '.:*oO@';
 
 /** Sample a looping swell without changing the camera or illustration bounds. @param {number} time @returns {object} */
 function sampleWaveMotion(time) {
-  const phase = time / LOOP_DURATION_IN_SECONDS * Math.PI * 2;
+  const phase = (time % LOOP_DURATION_IN_SECONDS) / LOOP_DURATION_IN_SECONDS * Math.PI * 2;
   return { phase, lift: Math.sin(phase) * 1.2, curl: Math.sin(phase + 0.8) * 2 };
 }
 
@@ -56,15 +60,21 @@ function sampleWaterTexture(column, row, motion) {
   return { light, character: grain > 0.72 ? ' ' : character };
 }
 
-/** Fill the wave while preserving the hollow under its curling lip. @param {object} frame @param {object} motion @returns {void} */
-function drawWaveBody(frame, motion) {
-  const outline = createWaveOutline(motion).flatMap(points => Array.from({ length: 32 }, (_, index) => sampleWaveCurve(points, index / 32)));
-  for (let row = 6; row < frame.rows - 2; row += 1) {
+/** Sample a closed breaker silhouette for scanline fills. @param {number[][][]} curves @returns {number[][]} */
+function sampleOutline(curves) {
+  return curves.flatMap(points => Array.from({ length: 32 }, (_, index) => sampleWaveCurve(points, index / 32)));
+}
+
+/** Paint textured water and optional whitewater over a closed silhouette. @param {object} frame @param {object} breaker @returns {void} */
+function drawWaveBody(frame, { curves, depth, sampleTexture }) {
+  const outline = sampleOutline(curves);
+  const firstRow = Math.max(1, Math.floor(Math.min(...outline.map(([, row]) => row))));
+  const lastRow = Math.min(frame.rows - 2, Math.ceil(Math.max(...outline.map(([, row]) => row))));
+  for (let row = firstRow; row <= lastRow; row += 1) {
     const intersections = intersectWaveOutline(outline, row + 0.5);
     for (let span = 0; span + 1 < intersections.length; span += 2) {
       for (let column = Math.ceil(intersections[span]); column <= intersections[span + 1]; column += 1) {
-        const texture = sampleWaterTexture(column, row, motion);
-        plotAsciiCharacter(frame, { column, row, depth: 2, ...texture });
+        plotAsciiCharacter(frame, { column, row, depth, ...sampleTexture(column, row) });
       }
     }
   }
@@ -140,14 +150,38 @@ function drawOceanRipples(frame, phase) {
   }
 }
 
-/** Render an eight-second woodcut-inspired curling wave with drifting foam. @param {number} time @returns {object} */
+/** Project the main curl into a smaller, independently shifting swell. @param {number} time @param {object} placement @returns {object} */
+function createSmallerBreaker(time, placement) {
+  const { left, top, widthScale, heightScale, depth, strength, delay } = placement;
+  const motion = sampleWaveMotion(time + LOOP_DURATION_IN_SECONDS * delay);
+  const movingLeft = left + Math.sin(motion.phase) * 2.2;
+  const movingTop = top + Math.cos(motion.phase) * 0.8;
+  const curves = createWaveOutline(motion).map(curve => curve.map(([column, row]) => [
+    movingLeft + column * widthScale, movingTop + row * heightScale,
+  ]));
+  const crest = sampleOutline(curves.slice(0, 3));
+  return { curves, depth, sampleTexture(column, row) {
+    const texture = sampleWaterTexture((column - movingLeft) / widthScale, (row - movingTop) / heightScale, motion);
+    const squaredFoamRadius = 2.3 + Math.sin(column * 1.7 + row * 2.3 + motion.phase) * 1.5;
+    const isFoam = crest.some(([crestColumn, crestRow]) =>
+      (crestColumn - column) ** 2 + ((crestRow - row) * 1.8) ** 2 <= squaredFoamRadius);
+    if (!isFoam) return { ...texture, light: texture.light * strength };
+    const glyph = Math.floor(column * 3 + row * 7) % FOAM_CHARACTERS.length;
+    return { light: (0.69 + Math.max(0, Math.sin(column * 2.2 + row)) * 0.3) * strength,
+      character: FOAM_CHARACTERS[glyph] };
+  } };
+}
+
+/** Render three overlapping breakers with staggered phases in a four-second loop. @param {number} time @returns {object} */
 export function renderAsciiWaves(time) {
   const frame = createAsciiFrame();
   const motion = sampleWaveMotion(time);
   drawOceanRipples(frame, motion.phase);
-  drawWaveBody(frame, motion);
+  drawWaveBody(frame, { curves: createWaveOutline(motion), depth: 2,
+    sampleTexture: (column, row) => sampleWaterTexture(column, row, motion) });
   drawWaveRidges(frame, motion);
   drawCrestFoam(frame, motion);
   drawWaveSpray(frame, motion.phase);
+  for (const placement of SMALLER_BREAKERS) drawWaveBody(frame, createSmallerBreaker(time, placement));
   return finishAsciiFrame(frame);
 }

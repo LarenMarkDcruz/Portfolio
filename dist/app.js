@@ -3,7 +3,7 @@ import { renderFocusLine, selectFocusLine } from './focus_lines.js';
 import { createIntroTyping } from './intro_typing.js?v=cursor-at-end';
 import { initializeAsciiSculpture } from './ascii_sculpture.js?v=carved-texture';
 import { selectIntroText } from './intro_sentences.js';
-import { initializeAsciiVignettes } from './ascii_vignettes.js?v=20261116-waves';
+import { initializeAsciiVignettes } from './ascii_vignettes.js?v=grinning-cat';
 import { initializeTerminalDock } from './terminal_dock.js?v=20261116-waves';
 
 document.querySelector('.intro-copy').textContent = selectIntroText([Math.random(), Math.random(), Math.random()]);

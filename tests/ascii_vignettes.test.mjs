@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { renderAsciiCat, sampleCatPose } from '../archive/ascii_vignettes/ascii_cat.js';
-import { renderAsciiWaves } from '../dist/ascii_waves.js';
+import { renderAsciiWaves } from '../archive/ascii_vignettes/ascii_waves.js';
 import { renderAsciiCoffee } from '../dist/ascii_coffee.js';
 import { renderAsciiRocket } from '../dist/ascii_rocket.js';
 import { createAsciiFrame, plotAsciiCharacter } from '../dist/ascii_frame.js';
 
 test('should repeat detailed animation frames without clipping any image edges', () => {
-  for (const [render, period] of [[renderAsciiCat, 6], [renderAsciiWaves, 8], [renderAsciiCoffee, 4], [renderAsciiRocket, 12]]) {
+  for (const [render, period] of [[renderAsciiCat, 6], [renderAsciiWaves, 4], [renderAsciiCoffee, 4], [renderAsciiRocket, 12]]) {
     const frame = render(0);
     const rows = frame.text.split('\n');
     assert.equal(rows.length, 64);
@@ -31,7 +31,7 @@ test('should coordinate the cat swat, fish escape, blink, and repeating tail mot
 });
 
 test('should preserve the open wave barrel and contrasting foam throughout the loop', () => {
-  for (let time = 0; time < 8; time += 0.5) {
+  for (let time = 0; time < 4; time += 0.5) {
     const frame = renderAsciiWaves(time);
     const rows = frame.text.split('\n');
     assert.equal(rows[33].slice(84, 105).trim(), '', 'The curling lip must not fill its barrel');
